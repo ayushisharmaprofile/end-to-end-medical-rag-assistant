@@ -1,0 +1,163 @@
+:root {
+    --primary-green: #2d7a5e;
+    --header-bg: #e6f4ea;         /* That beautiful light green shade */
+    --accent-sage: #f0f7f2;
+    --text-main: #334155;
+    --white: #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chat-container {
+    width: 400px;
+    height: 750px;
+    background: var(--white);
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+/* Trust-Building Header */
+.chat-header {
+    background-color: var(--header-bg);
+    padding: 25px 20px;
+    border-bottom: 1px solid #d8eadd;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-icon { font-size: 1.5rem; }
+
+.chat-header h2 {
+    font-size: 1.1rem;
+    color: var(--primary-green);
+    font-weight: 700;
+}
+
+.verified-status {
+    font-size: 0.7rem;
+    color: var(--primary-green);
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* Message Feed */
+.feed {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.bubble {
+    max-width: 85%;
+    padding: 15px;
+    background: var(--accent-sage);
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    position: relative;
+}
+
+.source-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--primary-green);
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Suggestion Chips */
+.suggestion-area {
+    padding: 15px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.chip {
+    white-space: nowrap;
+    background: white;
+    border: 1px solid #d1e7dd;
+    color: var(--primary-green);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.chip:hover {
+    background: var(--primary-green);
+    color: white;
+}
+
+/* Trust-Building Footer */
+.input-section {
+    padding: 20px;
+    border-top: 1px solid #f1f1f1;
+}
+
+.input-wrapper {
+    display: flex;
+    background: #f8fafc;
+    border-radius: 15px;
+    padding: 5px 10px;
+    align-items: center;
+    border: 1px solid #edf2f7;
+}
+
+input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px;
+    outline: none;
+}
+
+.send-btn {
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.safety-box {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.safety-box p {
+    font-size: 0.7rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.doctor-link {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: var(--primary-green);
+    font-weight: 700;
+    text-decoration: none;
+}
