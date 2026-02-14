@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Virtual Health Companion</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <div class="chat-container">
         <header class="chat-header">
             <div class="header-content">
-                <div class="header-icon">🌿️</div>
-                <div>
+                <div class="header-icon"><i class="fas fa-seedling" style="color: #2d7a5e;"></i></div>
+                <div class="header-info">
                     <h2>Your Virtual Health Companion</h2>
-                    <p class="verified-status">✓ Verified Clinical Info</p>
+                    <p class="verified-status"><i class="fas fa-check-circle"></i> Verified Clinical Info</p>
                 </div>
             </div>
         </header>
@@ -26,25 +34,96 @@
                 </div>
             </div>
 
-            <div class="suggestion-area">
-                <button class="chip">What is acne?</button>
-                <button class="chip">Check cold symptoms</button>
-                <button class="chip">Tips for better sleep</button>
+            <div class="message user" style="display:none;"> <!-- Placeholder for user message styling -->
+                <div class="bubble">
+                    Sample user message
+                </div>
             </div>
         </main>
 
+        <div class="suggestion-area">
+            <button class="chip">What is acne?</button>
+            <button class="chip">Check cold symptoms</button>
+            <button class="chip">Tips for better sleep</button>
+        </div>
+
         <footer class="input-section">
             <div class="input-wrapper">
-                <input type="text" placeholder="Tell me how you're feeling...">
-                <button class="send-btn">➔</button>
+                <input type="text" id="text" placeholder="Tell me how you're feeling...">
+                <button class="send-btn" id="send-btn"><i class="fas fa-paper-plane"></i></button>
             </div>
-            
+
             <div class="safety-box">
-                <p><strong>Safety First:</strong> This AI provides educational info based on RAG datasets. It is <u>not</u> a replacement for a doctor.</p>
+                <p><strong>Safety First:</strong> This AI provides educational info based on RAG datasets. It is
+                    <u>not</u> a replacement for a doctor.
+                </p>
                 <a href="#" class="doctor-link">Always consult with a medical professional</a>
             </div>
         </footer>
     </div>
 
+    <!-- jQuery for Chat Interaction -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to handle sending message
+            function sendMessage() {
+                var rawText = $("#text").val();
+                if (!rawText.trim()) return;
+
+                // User Message Bubble
+                var userHtml = '<div class="message user"><div class="bubble">' + rawText + '</div></div>';
+
+                $("#text").val(""); // Clear input
+                $(".feed").append(userHtml);
+                scrollToBottom();
+
+                // Loading Indicator (Optional but nice)
+                var loadingHtml = '<div class="message ai" id="loading"><div class="bubble">...</div></div>';
+                $(".feed").append(loadingHtml);
+                scrollToBottom();
+
+                // Send to Backend
+                $.ajax({
+                    data: {
+                        msg: rawText,
+                    },
+                    type: "POST",
+                    url: "/get",
+                }).done(function (data) {
+                    $("#loading").remove();
+                    // AI Message Bubble
+                    var botHtml = '<div class="message ai"><div class="bubble">' + data + '</div></div>';
+                    $(".feed").append(botHtml);
+                    scrollToBottom();
+                });
+            }
+
+            // Scroll to bottom helper
+            function scrollToBottom() {
+                var feed = $(".feed");
+                feed.scrollTop(feed[0].scrollHeight);
+            }
+
+            // Bind click and enter key
+            $("#send-btn").on("click", function () {
+                sendMessage();
+            });
+
+            $("#text").on("keypress", function (e) {
+                if (e.which == 13) {
+                    sendMessage();
+                }
+            });
+
+            // Suggestion chips
+            $(".chip").on("click", function () {
+                var text = $(this).text();
+                $("#text").val(text);
+                sendMessage();
+            });
+        });
+    </script>
 </body>
+
 </html>

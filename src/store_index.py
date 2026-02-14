@@ -1,43 +1,39 @@
+from src.helper import load_pdf_file, text_split, download_hugging_face_embeddings
+from pinecone import Pinecone, ServerlessSpec
+from langchain_pinecone import PineconeVectorStore
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
 
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-
+PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
-from pinecone import Pinecone 
-pinecone_api_key = PINECONE_API_KEY
-
-pc = Pinecone(api_key=pinecone_api_key)
-
-from pinecone import ServerlessSpec 
+# Initialize Pinecone
+pc = Pinecone(api_key=PINECONE_API_KEY)
 
 index_name = "medical-chatbot"
 
 # Check if the index exists and create it if necessary
-if not pc.has_index(index_name):
-    pc.create_index(
-        name=index_name,
-        dimension=384,  # Dimension of the embeddings
-        metric="cosine",  # Cosine similarity
-        spec=ServerlessSpec(cloud="aws", region="us-east-1")
-    )
+if index_name in pc.list_indexes().names():
+    pc.delete_index(index_name)
 
-# Access the index after ensuring it exists
-index = pc.Index(index_name)
+pc.create_index(
+    name=index_name,
+    dimension=384,
+    metric="cosine",
+    spec=ServerlessSpec(cloud="aws", region="us-east-1")
+)
 
-from langchain_pinecone import PineconeVectorStore
+# Load Data
+extracted_data = load_pdf_file(data='data/')
+text_chunks = text_split(extracted_data)
+embeddings = download_hugging_face_embeddings()
 
-# Load the existing Pinecone index
-# Ensure the embedding and texts_chunk are defined elsewhere in the code
-try:
-    docsearch = PineconeVectorStore.from_existing_index(
-        index_name=index_name,
-        embedding=embedding
-    )
-except NameError:
-    raise NameError("Ensure 'embedding' is defined before using it to load the index.")
+# Upsert Data to Pinecone
+docsearch = PineconeVectorStore.from_documents(
+    documents=text_chunks,
+    index_name=index_name,
+    embedding=embeddings,
+)
+print("Data indexed successfully!")
